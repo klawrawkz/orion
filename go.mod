@@ -1,3 +1,3 @@
-module github.com/microsoft/cobalt-docs
+module github.com/Microsoft/cobalt-docs
 
 go 1.12
