@@ -19,7 +19,7 @@ var setupCmd = &cobra.Command{
 	Long:  `Setup command is used to create a project with templates`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(template) > 0 {
-			fmt.Printf("cobalt setup --template is %s\n", template)
+			fmt.Printf("orion setup --template is %s\n", template)
 
 			allTheThings()
 		}
@@ -46,7 +46,7 @@ func getWorkingDirectory() string {
 
 func getTempPath() string {
 	tmpDir := os.TempDir()
-	tmpDir += "\\cobalt"
+	tmpDir += "\\orion"
 	return tmpDir
 }
 
@@ -105,7 +105,7 @@ func allTheThings() {
 		panic(err)
 	}
 
-	// git remote add origin git@github.com:iphilpot/cobalt.git;
+	// git remote add origin git@github.com:Microsoft/orion.git;
 	remoteURL := createGitRemoteURL(owner, repository, source)
 	_, err = r.CreateRemote(&config.RemoteConfig{
 		Name: remoteName,

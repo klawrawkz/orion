@@ -16,9 +16,9 @@ var runCmd = &cobra.Command{
 	Long:  `Run local test harness`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if docker {
-			fmt.Println("cobalt run --docker")
+			fmt.Println("orion run --docker")
 		} else {
-			fmt.Println("cobalt run")
+			fmt.Println("orion run")
 		}
 	},
 }
