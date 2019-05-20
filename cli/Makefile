@@ -1,5 +1,4 @@
 .PHONY: test
-PATH_TO_FILE = "./cli/Gopkg.toml"
 
 build:
 	go build -o cobalt -v
@@ -11,9 +10,3 @@ run:
 
 test: 
 	go test ./test -v
-
-deps:
-ifeq ("$(wildcard $(PATH_TO_FILE))","")
-	dep init
-endif
-	dep ensure
