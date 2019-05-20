@@ -1,4 +1,4 @@
-module github.com/Microsoft/cobalt-docs/cli
+module github.com/Microsoft/orion/cli
 
 go 1.12
 
