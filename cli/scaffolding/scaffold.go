@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// Provider interface encapsolates the behavior for fetching files
+// Provider interface encapsulates the behavior for fetching files
 // from a repo.
 type Provider interface {
 	FetchFiles() (Workspace, func())

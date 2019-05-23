@@ -10,7 +10,7 @@ run:
 	rm orion
 
 test: 
-	go test ./test -v
+	go test ./... -v
 
 clean:
 	rm ./orion
