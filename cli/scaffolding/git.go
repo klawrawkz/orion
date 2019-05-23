@@ -40,6 +40,7 @@ func (g GitProvider) FetchFiles() (Workspace, func()) {
 	// git init
 	r, err := git.PlainInit(g.Workspace.TemporaryLocationPath, false)
 	if err != nil {
+		cleanup()
 		panic(err)
 	}
 
@@ -137,7 +138,7 @@ func (w Workspace) startTemporaryWorkspace() func() {
 	// Clean-up closure to be called after work in temporary directory
 	// is completed.
 	return func() {
-		if _, err := os.Stat(w.TemporaryLocationPath); os.IsExist(err) {
+		if _, err := os.Stat(w.TemporaryLocationPath); !os.IsNotExist(err) {
 			err := os.RemoveAll(w.TemporaryLocationPath)
 			if err != nil {
 				panic("Could not delete temorary workspace.")
