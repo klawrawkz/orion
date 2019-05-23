@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/Microsoft/orion/cli/cmd"
+	"github.com/microsoft/orion/cli/cmd"
 )
 
 func TestSum(t *testing.T) {

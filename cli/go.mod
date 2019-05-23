@@ -1,4 +1,4 @@
-module github.com/Microsoft/orion/cli
+module github.com/microsoft/orion/cli
 
 go 1.12
 
