@@ -72,12 +72,8 @@ func initConfig() {
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
+		// TODO: Enable this if we start using viper
 		// fmt.Println("Can't read config:", err)
 		// os.Exit(1)
 	}
-}
-
-func Sum(a int, b int) int {
-	c := a + b
-	return c
 }

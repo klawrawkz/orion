@@ -8,6 +8,7 @@ import (
 
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/config"
+	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 const (
@@ -24,23 +25,23 @@ type GitProvider struct {
 
 // NewGitProvider ctor function for building a GitProvider struct
 func NewGitProvider(repo Repo, workspace Workspace) GitProvider {
-	gp := GitProvider{}
-	gp.Repo = repo
-	gp.Workspace = workspace
-
-	return gp
+	return GitProvider{
+		Repo:      repo,
+		Workspace: workspace,
+	}
 }
 
 // FetchFiles uses git to fetch files from the repo into the workspace.
-func (g GitProvider) FetchFiles() (Workspace, func()) {
+func (g GitProvider) FetchFiles() *Workspace {
 	remoteName := "origin"
+	branch := "master"
 
-	cleanup := g.Workspace.startTemporaryWorkspace()
+	g.Workspace.startTemporaryWorkspace()
 
 	// git init
 	r, err := git.PlainInit(g.Workspace.TemporaryLocationPath, false)
 	if err != nil {
-		cleanup()
+		g.Workspace.cleanupTemporaryWorkspace()
 		panic(err)
 	}
 
@@ -73,12 +74,24 @@ func (g GitProvider) FetchFiles() (Workspace, func()) {
 	// We don't clone / pull because this is a stop gap until go-git implements
 	// tree-ish checkout ability. This will enable us to only pull the needed
 	// folder and not entire code base.
-	err = workTree.Pull(&git.PullOptions{RemoteName: remoteName, Depth: 1})
-	if err != nil {
-		panic(err)
+	// Branch logic here is for future use for pinning to tag/branch vs master.
+	if branch == "master" {
+		err = workTree.Pull(&git.PullOptions{RemoteName: remoteName, Depth: 1})
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		err = workTree.Pull(&git.PullOptions{
+			RemoteName:    remoteName,
+			Depth:         1,
+			ReferenceName: plumbing.ReferenceName(branch),
+		})
+		if err != nil {
+			panic(err)
+		}
 	}
 
-	return g.Workspace, cleanup
+	return &g.Workspace
 }
 
 // Workspace represents the workspace used for scoffolding. It
@@ -91,25 +104,24 @@ type Workspace struct {
 
 // NewWorkspace ctor function for building a workspace struct
 func NewWorkspace(templateParam string) Workspace {
-	ws := Workspace{}
 
 	_, templateName := parseParam(templateParam)
 
-	ws.TemporaryLocationPath = func() string {
+	tempPath := func() string {
 		filePathString := os.TempDir() + orionDirName
 		filePath := filepath.FromSlash(filePathString)
 
 		return filePath
 	}()
 
-	ws.SourceDirectoryPath = func(temporaryLocationPath string, templateName string) string {
+	sourcePath := func(temporaryLocationPath string, templateName string) string {
 		filePathString := temporaryLocationPath + templatePathName + templateName + "/"
 		filePath := filepath.FromSlash(filePathString)
 
 		return filePath
-	}(ws.TemporaryLocationPath, templateName)
+	}(tempPath, templateName)
 
-	ws.DestinationDirectoryPath = func() string {
+	destinationPath := func() string {
 		wd, err := os.Getwd()
 		if err != nil {
 			panic(err)
@@ -121,28 +133,32 @@ func NewWorkspace(templateParam string) Workspace {
 		return filePath
 	}()
 
-	return ws
+	return Workspace{
+		TemporaryLocationPath:    tempPath,
+		SourceDirectoryPath:      sourcePath,
+		DestinationDirectoryPath: destinationPath,
+	}
 }
 
 // startTemporaryWorkspace #longnamebro creates the temp
 // dir that we will clone the repo into. Returns
 // cleanup function that is intended for use later after work is complete.
-func (w Workspace) startTemporaryWorkspace() func() {
+func (w Workspace) startTemporaryWorkspace() {
 	if _, err := os.Stat(w.TemporaryLocationPath); os.IsNotExist(err) {
 		err := os.Mkdir(w.TemporaryLocationPath, 0700)
 		if err != nil {
 			panic("Could not create temporary workspace.")
 		}
 	}
+}
 
-	// Clean-up closure to be called after work in temporary directory
-	// is completed.
-	return func() {
-		if _, err := os.Stat(w.TemporaryLocationPath); !os.IsNotExist(err) {
-			err := os.RemoveAll(w.TemporaryLocationPath)
-			if err != nil {
-				panic("Could not delete temorary workspace.")
-			}
+// cleanupTemporaryWorkspace to be called after work in temporary directory
+// is completed.
+func (w Workspace) cleanupTemporaryWorkspace() {
+	if _, err := os.Stat(w.TemporaryLocationPath); !os.IsNotExist(err) {
+		err := os.RemoveAll(w.TemporaryLocationPath)
+		if err != nil {
+			panic("Could not delete temporary workspace.")
 		}
 	}
 }
@@ -156,15 +172,18 @@ type Repo struct {
 
 // NewRepo ctor function for building a repo struct
 func NewRepo(templateParam string) Repo {
-	repo := Repo{}
 
-	repo.RepositoryName, repo.TemplateName = parseParam(templateParam)
+	repositoryName, templateName := parseParam(templateParam)
 
-	repo.RepositoryURL = func(repositoryName string) string {
+	repositoryURL := func(repositoryName string) string {
 		return fmt.Sprintf("https://github.com/microsoft/%s.git", repositoryName)
-	}(repo.RepositoryName)
+	}(repositoryName)
 
-	return repo
+	return Repo{
+		RepositoryName: repositoryName,
+		TemplateName:   templateName,
+		RepositoryURL:  repositoryURL,
+	}
 }
 
 // parseParam is a utility function that takes the template

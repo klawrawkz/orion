@@ -8,7 +8,7 @@ import (
 // Provider interface encapsulates the behavior for fetching files
 // from a repo.
 type Provider interface {
-	FetchFiles() (Workspace, func())
+	FetchFiles() *Workspace
 }
 
 // Scaffold uses a supplied provider to scaffold out a new
@@ -19,10 +19,9 @@ type Scaffold struct {
 
 // NewScaffold ctor to build scaffold struct
 func NewScaffold(provider Provider) Scaffold {
-	s := Scaffold{}
-	s.Provider = provider
-
-	return s
+	return Scaffold{
+		Provider: provider,
+	}
 }
 
 // Generate performs the scaffolding
@@ -33,7 +32,8 @@ func (s *Scaffold) Generate() {
 	}
 
 	// Fetch files using provider
-	workspace, cleanup := s.Provider.FetchFiles()
+	workspace := s.Provider.FetchFiles()
+	defer workspace.cleanupTemporaryWorkspace()
 
 	// interate over all FS objects
 	files, err := ioutil.ReadDir(workspace.SourceDirectoryPath)
@@ -52,6 +52,4 @@ func (s *Scaffold) Generate() {
 		}
 	}
 
-	// Cleanup temporary workspace
-	cleanup()
 }

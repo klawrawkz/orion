@@ -1,16 +1,22 @@
 .PHONY: test
 
-build:
-	go fmt
-	go build -o orion -v
+# Go parameters
+GOCMD=go
+GOBUILD=$(GOCMD) build
+GOCLEAN=$(GOCMD) clean
+GOTEST=$(GOCMD) test
+GOFMT=$(GOCMD) fmt
+BINARY_NAME=orion
 
-run:
-	go build -o orion -v
-	./orion -h
-	rm orion
-
+all: test build
+build: 
+	$(GOFMT)
+	$(GOBUILD) -o $(BINARY_NAME) -v
 test: 
-	go test ./... -v -cover
-
-clean:
-	rm ./orion
+	$(GOTEST) -v -cover ./... 
+clean: 
+	$(GOCLEAN)
+	rm -f $(BINARY_NAME)
+run:
+	$(GOBUILD) -o $(BINARY_NAME) -v ./...
+	./$(BINARY_NAME)

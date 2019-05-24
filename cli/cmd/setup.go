@@ -15,7 +15,7 @@ var provider scaffolding.Provider
 
 var setupCmd = &cobra.Command{
 	Use:   "setup",
-	Short: "Setup a new project",
+	Short: "Setup a new project from an existing template",
 	Long:  `Setup command is used to create a project with templates`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(template) > 0 {
