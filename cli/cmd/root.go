@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	cfgFileName string = ".cobalt"
+	cfgFileName string = ".orion"
 )
 
 var (
@@ -18,19 +18,23 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "cobalt",
-	Short: "Cobalt is an opinionated tool for configuring cloud providers with terraform templates.",
+	Use:   "orion",
+	Short: "Orion is an opinionated tool for configuring cloud providers with terraform templates.",
 	Long: `
 
-	_________     ______        __________ 
-	__  ____/________  /_______ ___  /_  /_
-	_  /    _  __ \_  __ \  __ '/_  /_  __/
-	/ /___  / /_/ /  /_/ / /_/ /_  / / /_  
-	\____/  \____//_.___/\__,_/ /_/  \__/  
+
+	 _____                                 
+	/\  __'\         __                    
+	\ \ \/\ \  _ __ /\_\    ___     ___    
+	 \ \ \ \ \/\''__\/\ \  / __'\ /' _ '\  
+	  \ \ \_\ \ \ \/ \ \ \/\ \L\ \/\ \/\ \ 
+	   \ \_____\ \_\  \ \_\ \____/\ \_\ \_\
+	    \/_____/\/_/   \/_/\/___/  \/_/\/_/
+										   
 										   	
                                                   
 This project is an attempt to combine and share best practices when building production 
-ready cloud native managed service solutions. Cobalt's infrastructure turn-key starter 
+ready cloud native managed service solutions. Orion's infrastructure turn-key starter 
 templates are based on real world engagements with enterprise customers.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Do Stuff Here
@@ -46,7 +50,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobalt)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.orion)")
 }
 
 func initConfig() {
@@ -62,18 +66,14 @@ func initConfig() {
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".cobalt" (without extension).
+		// Search config in home directory with name ".orion" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(cfgFileName)
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
+		// TODO: Enable this if we start using viper
 		// fmt.Println("Can't read config:", err)
 		// os.Exit(1)
 	}
-}
-
-func Sum(a int, b int) int {
-	c := a + b
-	return c
 }

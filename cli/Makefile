@@ -1,19 +1,22 @@
 .PHONY: test
-PATH_TO_FILE = "./cli/Gopkg.toml"
 
-build:
-	go build -o cobalt -v
+# Go parameters
+GOCMD=go
+GOBUILD=$(GOCMD) build
+GOCLEAN=$(GOCMD) clean
+GOTEST=$(GOCMD) test
+GOFMT=$(GOCMD) fmt
+BINARY_NAME=orion
 
-run:
-	go build -o cobalt -v
-	./cobalt -h
-	rm cobalt
-
+all: test build
+build: 
+	$(GOFMT)
+	$(GOBUILD) -o $(BINARY_NAME) -v
 test: 
-	go test ./test -v
-
-deps:
-ifeq ("$(wildcard $(PATH_TO_FILE))","")
-	dep init
-endif
-	dep ensure
+	$(GOTEST) -v -cover ./... 
+clean: 
+	$(GOCLEAN)
+	rm -f $(BINARY_NAME)
+run:
+	$(GOBUILD) -o $(BINARY_NAME) -v ./...
+	./$(BINARY_NAME)

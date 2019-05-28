@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Microsoft/cobalt-docs/cli/cmd"
+	"github.com/microsoft/orion/cli/cmd"
 )
 
 func main() {
