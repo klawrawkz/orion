@@ -1,5 +1,15 @@
 # Orion CLI
 
+## Install the CLI
+
+We use a simple script to download the latest release from the orion repo and move it to `/usr/local/bin/orion`. Download the installer script:
+
+`curl -fsSL https://raw.githubusercontent.com/microsoft/orion/tree/master/cli/scripts/installer.sh -o installer.sh`
+
+Inspect the installer to verify it does what you think. Now run the installer using this following command:
+
+`./installer.sh`
+
 Currently this only contains the start of the project structure, a test concept, Makefile and Readme. From a terminal, cd into the `cli` folder and run:
 
 ```make build```
