@@ -34,7 +34,7 @@ func NewGitProvider(repo Repo, workspace Workspace) GitProvider {
 // FetchFiles uses git to fetch files from the repo into the workspace.
 func (g GitProvider) FetchFiles() *Workspace {
 	remoteName := "origin"
-	branch := "master"
+	branch := "master" 
 
 	g.Workspace.startTemporaryWorkspace()
 

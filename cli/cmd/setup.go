@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/microsoft/orion/cli/scaffolding"
+	"github.com/microsoft/orion/cli/pkg/scaffolding"
 	"github.com/spf13/cobra"
 )
 
