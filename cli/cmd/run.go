@@ -1,11 +1,22 @@
 package cmd
 
 import (
+	"log"
+	"os"
+	"os/exec"
+	"runtime"
+
+	"github.com/microsoft/orion/cli/pkg/download"
 	"github.com/spf13/cobra"
 )
 
 var (
-	docker bool
+	docker                bool
+	localRun              = "https://raw.githubusercontent.com/microsoft/cobalt/master/test-harness/local-run.sh"
+	localRunWithOutDocker = "https://raw.githubusercontent.com/microsoft/cobalt/master/test-harness/local-run-wo-docker.sh"
+	initScript            = "https://raw.githubusercontent.com/microsoft/cobalt/master/test-harness/init.sh"
+	dockerfile            = "https://raw.githubusercontent.com/microsoft/cobalt/master/test-harness/Dockerfile"
+	mageFile              = "https://raw.githubusercontent.com/microsoft/cobalt/master/test-harness/magefile.go"
 )
 
 var runCmd = &cobra.Command{
@@ -13,20 +24,32 @@ var runCmd = &cobra.Command{
 	Short: "Run local test harness",
 	Long:  `Run local test harness`,
 	Run: func(cmd *cobra.Command, args []string) {
-		remoteLocation := ""
+		if runtime.GOOS == "windows" {
+			log.Fatalln("This will not run on Windows")
+		}
+
+		var testHarnessSetupScript download.URL
+		initScriptURL := download.NewURL(initScript)
+		dockerfileURL := download.NewURL(dockerfile)
+		mageFileURL := download.NewURL(mageFile)
 
 		if docker {
-			remoteLocation = getLocation()
+			testHarnessSetupScript = download.NewURL(localRun)
 		} else {
-			remoteLocation = getLocationWithoutDocker()
-		}
-		
-		localLocation, err := downloadScript(remoteLocation)
-		if err != nil {
-			panic(err)
+			testHarnessSetupScript = download.NewURL(localRunWithOutDocker)
 		}
 
-		runScript(localLocation)
+		urls := []download.URL{
+			initScriptURL,
+			dockerfileURL,
+			mageFileURL,
+			testHarnessSetupScript,
+		}
+
+		dlManager := download.NewManager(urls)
+		dlManager.FetchAll()
+
+		runScript(testHarnessSetupScript.FileName)
 	},
 }
 
@@ -35,51 +58,16 @@ func init() {
 	runCmd.Flags().BoolVarP(&docker, "docker", "d", true, "Run test harness in local docker")
 }
 
-func getInstallerLocation() string {
-	return "https://raw.githubusercontent.com/microsoft/cobalt/master/test-harness/local-run.sh"
-}
-
-func getInstallerLocationWithoutDocker() string {
-	return "https://raw.githubusercontent.com/microsoft/cobalt/master/test-harness/local-run-wo-docker.sh"
-}
-
-func downloadInstallerScript(scriptFile string) (string, error) {
-	return "pwd", nil
-}
-
-func getInitShLocation() string {
-	return ""
-}
-
-func downloadInitSh(initFile string) error {
-	return nil
-}
-
-func getDockerFileLocation() string {
-	return ""
-}
-
-func downloadDockerfile(dockerFile string) error {
-	return nil
-}
-
-func getMageFileLocation() string {
-	return ""
-}
-
-func downloadMageFile(mageFile string) error {
-	return nil
-}
-
 func runScript(script string) {
-	// Run script file
+	cmd := exec.Command("sh", script)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("Test harness failed to run with error: %s\n", err)
+	}
 }
-
-
-
-
-
-
 
 //   |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 //   |                                            |

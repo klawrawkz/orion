@@ -3,6 +3,7 @@ package download
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -39,39 +40,34 @@ func NewManager(urls []URL) Manager {
 
 // FetchAll will download all the files in the Manager.Urls slice
 func (m *Manager) FetchAll() {
-	ch := make(chan string)
-
 	for i := range m.Urls {
-		go fetch(m.Urls[i], ch)
-	}
-
-	for range os.Args[1:] {
-		fmt.Println(<-ch)
+		result, err := fetch(m.Urls[i])
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println(result)
 	}
 }
 
-func fetch(url URL, ch chan<- string) {
+func fetch(url URL) (string, error) {
 	start := time.Now()
 	resp, err := http.Get(url.URL)
 	if err != nil {
-		ch <- fmt.Sprint(err)
-		return
+		return "", fmt.Errorf("While getting %s: %v", url.URL, err)
 	}
 	defer resp.Body.Close()
 
 	out, err := os.Create(url.FileName)
 	if err != nil {
-		ch <- fmt.Sprint(err)
-		return
+		return "", fmt.Errorf("While creating file %s: %v", url.FileName, err)
 	}
 	defer out.Close()
 
 	w, err := io.Copy(out, resp.Body)
 	if err != nil {
-		ch <- fmt.Sprintf("while reading %s: %v", url, err)
-		return
+		return "", fmt.Errorf("while reading %s: %v", url, err)
 	}
 
 	secs := time.Since(start).Seconds()
-	ch <- fmt.Sprintf("%.2fs  %7d  %s", secs, w, url)
+	return fmt.Sprintf("%.2fs  %7d  %s", secs, w, url), nil
 }
