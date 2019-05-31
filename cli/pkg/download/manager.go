@@ -32,9 +32,15 @@ type Manager struct {
 }
 
 // NewManager takes a slice of URLs and returns a Manager
-func NewManager(urls []URL) Manager {
+func NewManager(urls []string) Manager {
+	var URLs []URL
+
+	for i := range urls {
+		URLs = append(URLs, NewURL(urls[i]))
+	}
+
 	return Manager{
-		Urls: urls,
+		Urls: URLs,
 	}
 }
 
@@ -45,7 +51,8 @@ func (m *Manager) FetchAll() {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		fmt.Println(result)
+
+		log.Println(result)
 	}
 }
 

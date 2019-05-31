@@ -26,7 +26,7 @@ List help commands:
 
 Setup template in current directory:
 
-```orion setup --template "bedrock/azure-simple"```
+```orion setup --template "cobalt/azure-simple"```
 
 > The flag `--template` is specified using the following structure:
 >
@@ -34,7 +34,9 @@ Setup template in current directory:
 
 Test the current template in current directory:
 
-```orion run --docker```
+```orion test --docker```
+
+This will download the test harness scripts and execute them on the current project directory.
 
 # Orion Usage
 1. Create project dir: my_orion_proj

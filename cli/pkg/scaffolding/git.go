@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	orionDirName     = "orion/"
+	orionDirName     = "/orion/"
 	templatePathName = "infra/templates/"
 )
 

@@ -27,9 +27,8 @@ func Test_NewURL(t *testing.T) {
 func Test_NewManager(t *testing.T) {
 	assert := assert.New(t)
 
-	lr := NewURL(localRun)
-	lrd := NewURL(localRunWoDocker)
-	urls := []URL{lr, lrd}
+	urls := []string{localRun, localRunWoDocker}
+
 	m := NewManager(urls)
 
 	assert.Equal(2, len(m.Urls), "NewManager did create Manager object")
@@ -39,7 +38,7 @@ func Test_FetchAll(t *testing.T) {
 	assert := assert.New(t)
 
 	tempPath := func() string {
-		filePathString := os.TempDir() + "orion_test/"
+		filePathString := os.TempDir() + "/orion_test/"
 		filePath := filepath.FromSlash(filePathString)
 
 		return filePath
@@ -52,14 +51,18 @@ func Test_FetchAll(t *testing.T) {
 		return filePath
 	}
 
+	// Just do this to create the manager
+	urls := []string{localRun, localRunWoDocker}
+	m := NewManager(urls)
+
 	lr := NewURL(localRun)
 	lr.FileName = tempFileName(lr.FileName)
-
 	lrd := NewURL(localRunWoDocker)
 	lrd.FileName = tempFileName(lrd.FileName)
+	testUrls := []URL{lr, lrd}
 
-	urls := []URL{lr, lrd}
-	m := NewManager(urls)
+	// swap the urls with testable url filenames in tmp dir
+	m.Urls = testUrls
 
 	if _, err := os.Stat(tempPath); os.IsNotExist(err) {
 		err := os.Mkdir(tempPath, 0700)
