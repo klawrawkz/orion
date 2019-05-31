@@ -27,10 +27,8 @@ var runCmd = &cobra.Command{
 
 		if docker == true {
 			// Cut 2nd item in slice (without docker script)
-			print("With Docker")
 			urls = append(urls[:1], urls[2:]...)
 		} else {
-			print("Without Docker")
 			// Cut 1st item in slice (docker script)
 			urls = urls[1:]
 		}

@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"fmt"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -47,7 +46,6 @@ func Test_FetchFiles(t *testing.T) {
 	assert := assert.New(t)
 
 	gp := NewGitProvider(NewRepo(templateParam), NewWorkspace(templateParam))
-	fmt.Println(gp.Workspace.TemporaryLocationPath)
 	ws := gp.FetchFiles()
 	defer ws.cleanupTemporaryWorkspace()
 
