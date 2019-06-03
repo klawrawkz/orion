@@ -36,7 +36,7 @@ var runCmd = &cobra.Command{
 		dlManager := download.NewManager(urls)
 		dlManager.FetchAll()
 
-		utils.RunScript(dlManager.Urls[0].FileName)
+		utils.RunScript("bash", dlManager.Urls[0].FileName)
 	},
 }
 
