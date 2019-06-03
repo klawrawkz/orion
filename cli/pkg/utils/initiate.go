@@ -1,15 +1,15 @@
 package utils
 
 import (
+	"log"
 	"os"
 	"os/exec"
-	"log"
 )
 
 // RunScript takes a script path as a string and executes it while
 // sending stdout/stderr to os default
-func RunScript(script string) {
-	cmd := exec.Command("sh", script)
+func RunScript(command string, script string) {
+	cmd := exec.Command(command, script)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 

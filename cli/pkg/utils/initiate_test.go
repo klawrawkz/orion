@@ -14,7 +14,7 @@ func Test_RunScript(t *testing.T) {
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 	
-	RunScript("../../scripts/echor.sh")
+	RunScript("echo", "Ian was here") 
 	
 	outS := make(chan string)
 	go func() {
