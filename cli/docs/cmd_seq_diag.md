@@ -1,6 +1,6 @@
 # Orion Commands - Sequence Diagrams
 
-We're using [Web Sequence Diagrams](https://www.websequencediagrams.com/) to generate our the diagrams shown below.
+We're using [Web Sequence Diagrams](https://www.websequencediagrams.com/) to generate the diagrams shown below.
 
 ## Orion CLI Setup Command
 
@@ -72,9 +72,10 @@ destroy Temp Workspace
 title Orion CLI Test Cmd
 
 
-App Repo-->GitHub: orion test [--docker]
-App Repo-->App Repo: test for dependancies
+App Repo-->App Repo: orion test [--docker]
+App Repo-->App Repo: test for dependencies
 
+App Repo-->GitHub: Request test files
 GitHub-->App Repo: Download Test-Harness Folder + Files
 
 alt orion test --docker
