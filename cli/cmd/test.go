@@ -44,13 +44,3 @@ func init() {
 	rootCmd.AddCommand(runCmd)
 	runCmd.Flags().BoolVarP(&docker, "docker", "d", false, "Run test harness in local docker")
 }
-
-//   |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-//   |                                            |
-//   |     NNNN        NN  II  NN        NNNN     |
-//   |     NN  NN      NN  II  NN      NN  NN     |
-//   |     NN    NN    NN  II  NN    NN    NN     |
-//   |     NN      NN  NN  II  NN  NN      NN     |
-//   |     NN        NNNN  II  NNNN        NN     |
-//   |                                            |
-//   |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |

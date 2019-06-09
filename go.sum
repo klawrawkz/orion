@@ -1,4 +1,5 @@
 github.com/Microsoft/orion/cli v0.0.0-20190528211057-5f78e5ef8b59 h1:0tq3+TfO3TFuxBRu332qSc9JPyJZcEYVyQ/7v600POs=
+github.com/Microsoft/orion/cli v0.0.0-20190607215104-75c324437a91 h1:p8+z1w93nW7Vp3Xkmq9bb43LQxgwuK5mllXmxJ5/2zI=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

@@ -19,7 +19,7 @@ var (
 func Test_NewURL(t *testing.T) {
 	assert := assert.New(t)
 
-	u := NewURL(localRun)
+	u := NewTarget(localRun)
 
 	assert.Equal(localRunFileName, u.FileName, "NewURL didn't parse the correct file name")
 }
@@ -31,7 +31,7 @@ func Test_NewManager(t *testing.T) {
 
 	m := NewManager(urls)
 
-	assert.Equal(2, len(m.Urls), "NewManager did create Manager object")
+	assert.Equal(2, len(m.Urls), "NewManager did not create expected URLs")
 }
 
 func Test_FetchAll(t *testing.T) {
@@ -51,15 +51,13 @@ func Test_FetchAll(t *testing.T) {
 		return filePath
 	}
 
-	// Just do this to create the manager
-	urls := []string{localRun, localRunWoDocker}
-	m := NewManager(urls)
+	m := Manager{ Urls: []Target{} }
+	lr := NewTarget(localRun)
+	lrd := NewTarget(localRunWoDocker)
 
-	lr := NewURL(localRun)
 	lr.FileName = tempFileName(lr.FileName)
-	lrd := NewURL(localRunWoDocker)
 	lrd.FileName = tempFileName(lrd.FileName)
-	testUrls := []URL{lr, lrd}
+	testUrls := []Target{lr, lrd}
 
 	// swap the urls with testable url filenames in tmp dir
 	m.Urls = testUrls

@@ -10,17 +10,17 @@ import (
 	"time"
 )
 
-// URL contains the url and filename of the item to be downloaded
-type URL struct {
+// Target contains the url and filename of the item to be downloaded
+type Target struct {
 	FileName string
 	URL      string
 }
 
-// NewURL creates a URL from a url string
-func NewURL(url string) URL {
+// NewTarget creates a Target from a url string
+func NewTarget(url string) Target {
 	fileName := strings.Split(url, "/")
 
-	return URL{
+	return Target{
 		FileName: fileName[len(fileName)-1],
 		URL:      url,
 	}
@@ -28,15 +28,15 @@ func NewURL(url string) URL {
 
 // Manager contains urls and functionality for downloading those items
 type Manager struct {
-	Urls []URL
+	Urls []Target
 }
 
 // NewManager takes a slice of URLs and returns a Manager
 func NewManager(urls []string) Manager {
-	var URLs []URL
+	var URLs []Target
 
 	for i := range urls {
-		URLs = append(URLs, NewURL(urls[i]))
+		URLs = append(URLs, NewTarget(urls[i]))
 	}
 
 	return Manager{
@@ -56,7 +56,7 @@ func (m *Manager) FetchAll() {
 	}
 }
 
-func fetch(url URL) (string, error) {
+func fetch(url Target) (string, error) {
 	start := time.Now()
 	resp, err := http.Get(url.URL)
 	if err != nil {
