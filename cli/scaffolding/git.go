@@ -13,7 +13,9 @@ import (
 
 const (
 	orionDirName     = "orion/"
-	templatePathName = "infra/templates/"
+	rootPathName     = "infra/"
+	templatePathName = rootPathName + "templates/"
+	modulePathName   = rootPathName + "modules/"
 )
 
 // GitProvider represents how we will scaffold and uses git to provide
@@ -36,12 +38,12 @@ func (g GitProvider) FetchFiles() *Workspace {
 	remoteName := "origin"
 	branch := "master"
 
-	g.Workspace.startTemporaryWorkspace()
+	createFolderIfNotExist(g.Workspace.TemporaryDirectoryPath)
 
 	// git init
-	r, err := git.PlainInit(g.Workspace.TemporaryLocationPath, false)
+	r, err := git.PlainInit(g.Workspace.TemporaryDirectoryPath, false)
 	if err != nil {
-		g.Workspace.cleanupTemporaryWorkspace()
+		deleteFolderIfExist(g.Workspace.TemporaryDirectoryPath)
 		panic(err)
 	}
 
@@ -97,9 +99,12 @@ func (g GitProvider) FetchFiles() *Workspace {
 // Workspace represents the workspace used for scoffolding. It
 // contains both temporary and working directories
 type Workspace struct {
-	TemporaryLocationPath    string
-	SourceDirectoryPath      string
-	DestinationDirectoryPath string
+	TemporaryDirectoryPath           string
+	TemporaryTemplateDirectoryPath   string
+	TemporaryModuleDirectoryPath     string
+	DestinationDirectoryPath         string
+	DestinationTemplateDirectoryPath string
+	DestinationModuleDirectoryPath   string
 }
 
 // NewWorkspace ctor function for building a workspace struct
@@ -107,19 +112,12 @@ func NewWorkspace(templateParam string) Workspace {
 
 	_, templateName := parseParam(templateParam)
 
-	tempPath := func() string {
+	temporaryPath := func() string {
 		filePathString := os.TempDir() + orionDirName
 		filePath := filepath.FromSlash(filePathString)
 
 		return filePath
 	}()
-
-	sourcePath := func(temporaryLocationPath string, templateName string) string {
-		filePathString := temporaryLocationPath + templatePathName + templateName + "/"
-		filePath := filepath.FromSlash(filePathString)
-
-		return filePath
-	}(tempPath, templateName)
 
 	destinationPath := func() string {
 		wd, err := os.Getwd()
@@ -133,32 +131,55 @@ func NewWorkspace(templateParam string) Workspace {
 		return filePath
 	}()
 
+	templatePath := func(basePath string, templateName string) string {
+		filePathString := basePath + templatePathName + templateName + "/"
+		filePath := filepath.FromSlash(filePathString)
+
+		return filePath
+	}
+
+	modulePath := func(basePath string) string {
+		filePathString := basePath + modulePathName
+		filePath := filepath.FromSlash(filePathString)
+
+		return filePath
+	}
+
 	return Workspace{
-		TemporaryLocationPath:    tempPath,
-		SourceDirectoryPath:      sourcePath,
-		DestinationDirectoryPath: destinationPath,
+		TemporaryDirectoryPath:           temporaryPath,
+		TemporaryTemplateDirectoryPath:   templatePath(temporaryPath, templateName),
+		TemporaryModuleDirectoryPath:     modulePath(temporaryPath),
+		DestinationDirectoryPath:         destinationPath,
+		DestinationTemplateDirectoryPath: templatePath(destinationPath, templateName),
+		DestinationModuleDirectoryPath:   modulePath(destinationPath),
 	}
 }
 
-// startTemporaryWorkspace #longnamebro creates the temp
-// dir that we will clone the repo into. Returns
-// cleanup function that is intended for use later after work is complete.
-func (w Workspace) startTemporaryWorkspace() {
-	if _, err := os.Stat(w.TemporaryLocationPath); os.IsNotExist(err) {
-		err := os.Mkdir(w.TemporaryLocationPath, 0700)
+// createFolderIfNotExist will create a dir given a path if it doesn't
+// already exist.
+func createFolderIfNotExist(folderPath string) {
+	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
+		err := os.Mkdir(folderPath, 0700)
 		if err != nil {
-			panic("Could not create temporary workspace.")
+			panic(fmt.Sprintf("Could not create %s", folderPath))
 		}
 	}
 }
 
-// cleanupTemporaryWorkspace to be called after work in temporary directory
-// is completed.
-func (w Workspace) cleanupTemporaryWorkspace() {
-	if _, err := os.Stat(w.TemporaryLocationPath); !os.IsNotExist(err) {
-		err := os.RemoveAll(w.TemporaryLocationPath)
+func checkFolderExist(folderPath string) bool {
+	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
+}
+
+// deleteFolderIfExist removes a folder given a path if it exists.
+func deleteFolderIfExist(folderPath string) {
+	if _, err := os.Stat(folderPath); !os.IsNotExist(err) {
+		err := os.RemoveAll(folderPath)
 		if err != nil {
-			panic("Could not delete temporary workspace.")
+			panic(fmt.Sprintf("Could not delete %s", folderPath))
 		}
 	}
 }

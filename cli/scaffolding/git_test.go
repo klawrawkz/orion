@@ -47,9 +47,9 @@ func Test_FetchFiles(t *testing.T) {
 
 	gp := NewGitProvider(NewRepo(templateParam), NewWorkspace(templateParam))
 	ws := gp.FetchFiles()
-	defer ws.cleanupTemporaryWorkspace()
+	defer deleteFolderIfExist(ws.TemporaryDirectoryPath)
 
-	_, err := ioutil.ReadDir(gp.Workspace.SourceDirectoryPath)
+	_, err := ioutil.ReadDir(gp.Workspace.TemporaryTemplateDirectoryPath)
 	assert.NoError(err)
 
 }
@@ -58,8 +58,8 @@ func Test_startTemporaryWorkspace(t *testing.T) {
 	assert := assert.New(t)
 
 	w := NewWorkspace(templateParam)
-	w.startTemporaryWorkspace()
-	defer w.cleanupTemporaryWorkspace()
+	createFolderIfNotExist(w.TemporaryDirectoryPath)
+	defer deleteFolderIfExist(w.TemporaryDirectoryPath)
 
 	expectedFilePath := filepath.FromSlash(os.TempDir() + orionDirName)
 
