@@ -18,7 +18,7 @@ Currently this only contains the start of the project structure, a test concept,
 
 We are currently only using go-cobra and go-testing packages just to get something committed. 
 
-# Orion CLI Commands
+## Orion CLI Commands
 
 List help commands:
 
@@ -36,7 +36,7 @@ Test the current template in current directory:
 
 ```orion run --docker```
 
-# Orion Usage
+## Orion Usage
 1. Create project dir: my_orion_proj
 2. `cd` to my_orion_proj
 3. Run `orion setup --template "orion/azure-simple"`
@@ -59,3 +59,15 @@ ianphil@afropro.local [~/src/tmp/my_orion_proj]
 │           │       └── azure_simple_integration_test.go
 │           └── variables.tf
 ```
+
+## Optional: Install WSL Extension for VS Code
+
+The recommended IDE for Orion use and development is [VS Code](https://code.visualstudio.com) with the WSL (Windows Subsystem for Linux) extension. VS Code is an open-source, cross-platform IDE. The WSL extension allows developers to use, develop, and debug Linux-specific applications from an integrated terminal window inside VS Code.
+
+ - [Install VS Code for Windows, Mac, or Linux](https://code.visualstudio.com/)
+ - [Install the WSL extension for VS Code](https://code.visualstudio.com/docs/remote/wsl).
+
+The Extensions tab in VS Code contains additional extensions for Go, Azure Terraform, and more.
+
+![WSL in VS Code](assets/vscode-wsl.png)
+
